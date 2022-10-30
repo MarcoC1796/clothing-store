@@ -25,15 +25,20 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig);
 
 // A provider is kind of intructions for an instance of a provider (you might have many providres)
-const provider = new GoogleAuthProvider(); // class connected to Google Auth
+// the provider is a class
+const googleProvider = new GoogleAuthProvider(); // class connected to Google Auth
 
-provider.setCustomParameters({
+googleProvider.setCustomParameters({
   prompt: "select_account",
 });
 
 // The authentication should be unique to the duartion of the connection (not like the provider)
+// auth is an instance
 export const auth = getAuth();
-export const signInWithGooglePopup = () => signInWithPopup(auth, provider);
+export const signInWithGooglePopup = () =>
+  signInWithPopup(auth, googleProvider);
+export const signInWithGoogleRedirect = () =>
+  signInWithRedirect(auth, googleProvider);
 
 // get database instance
 export const db = getFirestore();

@@ -5,6 +5,8 @@ import {
   signInWithRedirect,
   signInWithPopup,
   GoogleAuthProvider,
+  createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
 } from "firebase/auth";
 import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
 
@@ -44,7 +46,12 @@ export const signInWithGoogleRedirect = () =>
 export const db = getFirestore();
 
 // get auth data and store it in firestore if user doesn't exists
-export const createUserDocumentfromAuth = async (userAuth) => {
+export const createUserDocumentfromAuth = async (
+  userAuth,
+  additionalInformation = {}
+) => {
+  if (!userAuth) return;
+
   // creating document
   // firebase will specify the collection specified if it doesn't exit in the db
   const userDocRef = doc(db, "user", userAuth.uid); // (databse, collection, identifier)
@@ -65,9 +72,17 @@ export const createUserDocumentfromAuth = async (userAuth) => {
         displayName,
         email,
         createdAt,
+        ...additionalInformation, // overrites values if passed
       });
     } catch (error) {
       console.log("error creating the user", error.message);
     }
   }
+  return userDocRef;
+};
+
+export const createAuthUserWithEmailAndPassword = async (email, password) => {
+  if (!email || !password) return;
+
+  return await createUserWithEmailAndPassword(auth, email, password);
 };

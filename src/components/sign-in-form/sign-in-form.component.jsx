@@ -98,7 +98,7 @@ const SignInForm = () => {
           label="Password"
           name="password"
           value={password}
-          type="label"
+          type="password"
           required
           onChange={handleChange}
         />

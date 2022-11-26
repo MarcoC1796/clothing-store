@@ -8,6 +8,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
+  onAuthStateChanged,
 } from "firebase/auth";
 import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
 
@@ -61,9 +62,6 @@ export const createUserDocumentfromAuth = async (
 
   const userSnapshot = await getDoc(userDocRef);
 
-  console.log(userSnapshot);
-  console.log(userSnapshot.exists());
-
   // Store user document if user id doesn't exist in db
   if (!userSnapshot.exists()) {
     const { displayName, email } = userAuth;
@@ -95,3 +93,9 @@ export const signInAuthUserWithEmailAndPassword = async (email, password) => {
 };
 
 export const signOutUser = async () => await signOut(auth);
+
+export const onAuthStateChangedListener = (callback) =>
+  // The callback is called whenever the auth changes
+  // This is a permanent open listener (usisng the observer paterrn)
+  // our callback is the next function f the observer pattern.
+  onAuthStateChanged(auth, callback);

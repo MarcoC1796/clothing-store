@@ -1,6 +1,9 @@
 import { Fragment, useContext } from "react";
 import { Outlet, Link } from "react-router-dom";
 
+import CartIcon from "../../components/cart-icon/cart-icon.component";
+import CartDropdown from "../../components/cart-dropdown/cart-dropdown.component";
+
 import { ReactComponent as CrwnLogo } from "../../assets/crown.svg";
 import { UserContext } from "../../contexts/user.context";
 
@@ -16,6 +19,7 @@ const Navigation = () => {
     // rendering additionl divs or other elements
 
     // The Link component comes from react router and functions like an anchor tag
+    // The Outlet component will render the component that matches the subroute
     <Fragment>
       <div className="navigation">
         <Link className="logo-container" to="/">
@@ -34,7 +38,9 @@ const Navigation = () => {
               SIGN IN
             </Link>
           )}
+          <CartIcon />
         </div>
+        <CartDropdown />
       </div>
       <Outlet />
     </Fragment>

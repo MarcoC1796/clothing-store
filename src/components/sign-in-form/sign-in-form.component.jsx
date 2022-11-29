@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { getRedirectResult } from "@firebase/auth";
 
 import FormInput from "../form-input/form-input.component";
-import Button from "../button.component.jsx/button.component";
+import Button from "../button/button.component";
 
 import {
   auth,

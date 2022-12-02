@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { getRedirectResult } from "@firebase/auth";
 
 import FormInput from "../form-input/form-input.component";
-import Button from "../button.component.jsx/button.component";
+import Button from "../button/button.component";
 
 import {
   auth,
@@ -33,27 +33,28 @@ const SignInForm = () => {
     const fetchUser = async () => {
       // auth it's a singleton
       // auth tracks all of our identification states like an identification back regardless of where the page goes
-      const response = await getRedirectResult(auth);
-      if (response) {
-        await createUserDocumentfromAuth(response);
-      }
+      // const response = await getRedirectResult(auth);
+      // The following code is no longer necesary
+      // The userContext handles the document creation after the auth changes
+      // We keep the code for learning purposes.
+      // if (response) {
+      //   await createUserDocumentfromAuth(response);
+      // }
     };
     fetchUser();
   }, []);
 
   const signInWithGoogle = async () => {
-    const { user } = await signInWithGooglePopup();
-    await createUserDocumentfromAuth(user);
+    await signInWithGooglePopup();
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await signInAuthUserWithEmailAndPassword(
+      const { user } = await signInAuthUserWithEmailAndPassword(
         email,
         password
       );
-      console.log(response);
       resetFormFields();
     } catch (error) {
       switch (error.code) {
@@ -92,7 +93,7 @@ const SignInForm = () => {
           label="Password"
           name="password"
           value={password}
-          type="label"
+          type="password"
           required
           onChange={handleChange}
         />

@@ -17,6 +17,8 @@ import {
   setDoc,
   collection,
   writeBatch,
+  query,
+  getDocs,
 } from "firebase/firestore";
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -79,6 +81,23 @@ export const addCollectionAndDocuments = async (
   // will undo writes if one of those writes fails
   await batch.commit();
   console.log("done");
+};
+
+// quering and constructing an object of item categories
+// we isolate this functionality is one function to only change this functionality
+// in case the implementation changes
+// this applies to all other encapsulation function
+export const getCategoriesAndDocuments = async () => {
+  const collectionRef = collection(db, "categories");
+  const q = query(collectionRef);
+
+  const querySnapshot = await getDocs(q);
+  const categoryMap = querySnapshot.docs.reduce((acc, docSnapshot) => {
+    const { title, items } = docSnapshot.data();
+    acc[title.toLowerCase()] = items;
+    return acc;
+  }, {});
+  return categoryMap;
 };
 
 // get auth data and store it in firestore if user doesn't exists

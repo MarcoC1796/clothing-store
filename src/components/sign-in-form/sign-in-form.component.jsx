@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { getRedirectResult } from "@firebase/auth";
 
 import FormInput from "../form-input/form-input.component";
-import Button from "../button/button.component";
+import Button, { BUTTON_TYPE_CLASSES } from "../button/button.component";
 
 import {
   auth,
@@ -111,7 +111,7 @@ const SignInForm = () => {
         <br />
         <Button
           type="button"
-          buttonType={"google"}
+          buttonType={BUTTON_TYPE_CLASSES.google}
           onClick={signInWithGoogleRedirect}
         >
           Redir Sign In

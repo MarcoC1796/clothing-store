@@ -10,7 +10,16 @@ import {
   signOut,
   onAuthStateChanged,
 } from "firebase/auth";
-import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  collection,
+  writeBatch,
+  query,
+  getDocs,
+} from "firebase/firestore";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -47,6 +56,50 @@ export const signInWithGoogleRedirect = () =>
 // get database instance
 export const db = getFirestore();
 
+export const addCollectionAndDocuments = async (
+  collectionKey,
+  objectsToAdd
+) => {
+  // creating a collection istance that can be written to the database
+  const collectionRef = collection(db, collectionKey);
+
+  // instances a new batch to begin a future transtacion in the database
+  // a transaction is a serires of writes that need to be completed
+  // if one of those writes fails, everything is reversed
+  const batch = writeBatch(db);
+
+  // creating posible writes fot this batch
+  objectsToAdd.forEach((object) => {
+    // creating document instance that can be referenced to write in the database
+    const docRef = doc(collectionRef, object.title.toLowerCase());
+    // giving the document reference and actual value to be stored
+    batch.set(docRef, object);
+  });
+
+  // executing writes
+  // will return an error if one of those writes fails
+  // will undo writes if one of those writes fails
+  await batch.commit();
+  console.log("done");
+};
+
+// quering and constructing an object of item categories
+// we isolate this functionality is one function to only change this functionality
+// in case the implementation changes
+// this applies to all other encapsulation function
+export const getCategoriesAndDocuments = async () => {
+  const collectionRef = collection(db, "categories");
+  const q = query(collectionRef);
+
+  const querySnapshot = await getDocs(q);
+  const categoryMap = querySnapshot.docs.reduce((acc, docSnapshot) => {
+    const { title, items } = docSnapshot.data();
+    acc[title.toLowerCase()] = items;
+    return acc;
+  }, {});
+  return categoryMap;
+};
+
 // get auth data and store it in firestore if user doesn't exists
 export const createUserDocumentfromAuth = async (
   userAuth,
@@ -57,8 +110,6 @@ export const createUserDocumentfromAuth = async (
   // creating document
   // firebase will specify the collection specified if it doesn't exit in the db
   const userDocRef = doc(db, "user", userAuth.uid); // (databse, collection, identifier)
-
-  console.log(userDocRef);
 
   const userSnapshot = await getDoc(userDocRef);
 

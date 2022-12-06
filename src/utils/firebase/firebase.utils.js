@@ -111,8 +111,6 @@ export const createUserDocumentfromAuth = async (
   // firebase will specify the collection specified if it doesn't exit in the db
   const userDocRef = doc(db, "user", userAuth.uid); // (databse, collection, identifier)
 
-  console.log(userDocRef);
-
   const userSnapshot = await getDoc(userDocRef);
 
   // Store user document if user id doesn't exist in db

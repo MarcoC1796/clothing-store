@@ -1,11 +1,38 @@
 import { Routes, Route } from "react-router-dom";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+
+import {
+  onAuthStateChangedListener,
+  createUserDocumentfromAuth,
+} from "./utils/firebase/firebase.utils";
+
 import Navigation from "./routes/navigation/navigation.component";
 import Home from "./routes/home/home.component";
 import Authentication from "./routes/authentication/authentication.component";
 import Shop from "./routes/shop/shop.component";
 import Checkout from "./routes/checkout/checkout.component";
 
+import { setCurrentUser } from "./store/user/user.action";
+
 const App = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChangedListener((user) => {
+      if (user) {
+        createUserDocumentfromAuth(user);
+      }
+      dispatch(setCurrentUser(user));
+    });
+    // useEffect runs whatever it returns
+    // we need to unsubscribe from the observer of the auth whenever this component unmounts
+    // to avoid memory leaks.
+    return unsubscribe;
+    // we pass dispatch as a parameter to useEffect, even though it doesn't change
+    // we add it just to get rid of the linting error.
+  }, [dispatch]);
+
   return (
     // Nested Paths
     // Parental components will render always unless told otherwise
